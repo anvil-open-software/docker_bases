@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2018 Dematic, Corp.
+  ~ Licensed under the MIT Open Source License: https://opensource.org/licenses/MIT
+  -->
+
+<project>
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.dematic.labs</groupId>
+        <artifactId>docker_bases</artifactId>
+        <version>2.0.1-SNAPSHOT</version>
+    </parent>
+
+    <groupId>com.dematic.labs.docker_bases</groupId>
+    <artifactId>mysql_5.6</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.dematic.labs.toolkit.helpers</groupId>
+            <artifactId>test_util</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <configuration>
+                    <images>
+                        <image>
+                            <name>us.gcr.io/dlabs-dev-primary/%a:latest</name>
+                            <alias>mysql</alias>
+                            <run>
+                                <ports>
+                                    <port>mysql.port:3306</port>
+                                </ports>
+                                <volumes>
+                                    <bind>
+                                        <volume>src/test/docker/secrets:/opt/dlabs/secrets:ro</volume>
+                                    </bind>
+                                </volumes>
+                                <wait>
+                                    <healthy>true</healthy>
+                                    <time>60000</time>
+                                </wait>
+                            </run>
+                        </image>
+                    </images>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>start-execution</id>
+                        <goals>
+                            <goal>start</goal>
+                        </goals>
+                        <phase>pre-integration-test</phase>
+                    </execution>
+                    <execution>
+                        <id>stop-execution</id>
+                        <goals>
+                            <goal>stop</goal>
+                        </goals>
+                        <phase>post-integration-test</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
